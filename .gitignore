@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+.vscode/
+.idea/
+*.xlsx
+*.csv
+*.zip
+backups/
+private/
+secrets/

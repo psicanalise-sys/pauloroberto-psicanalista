@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Estrada | Experiência de Autopercepção</title>
+  <meta name="description" content="A Estrada é uma experiência guiada de autopercepção para refletir sobre caminhos, escolhas, obstáculos e futuro." />
+  <style>
+    :root{
+      --ink:#173544;
+      --ink-2:#274c5e;
+      --gold:#b59a62;
+      --paper:#f7f4ed;
+      --white:#ffffff;
+      --muted:#667780;
+      --line:#ddd5c7;
+      --soft:#fbf8f1;
+      --ok:#2b8f64;
+      --danger:#a83f3f;
+      --shadow:0 20px 60px rgba(23,53,68,.10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#f6f2e8 0%,#fbfaf7 100%);
+      line-height:1.55;
+    }
+    .page{max-width:1180px;margin:auto;padding:32px 18px 48px}
+    .shell{
+      background:var(--white);
+      border:1px solid #eee6d8;
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:1.12fr .88fr;
+      min-height:760px;
+    }
+    .content{padding:34px 34px 28px}
+    .side{
+      background:linear-gradient(180deg,#f9f5ed 0%,#f4efe4 100%);
+      border-left:1px solid #ece3d3;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .eyebrow{
+      color:var(--gold);
+      font-size:12px;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .brand{font-weight:700;font-size:14px;color:var(--ink-2)}
+    .progress{height:8px;background:#e8dfd1;border-radius:999px;overflow:hidden;flex:1}
+    .progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),#d7bc85);transition:width .3s ease}
+    h1,h2{margin:0 0 12px;color:var(--ink)}
+    h1{font-size:40px;line-height:1.08}
+    h2{font-size:29px;line-height:1.15}
+    p{margin:0 0 14px}
+    .lead{font-size:18px;color:#405862}
+    .small{font-size:13px;color:var(--muted)}
+    .q{display:none}
+    .q.active{display:block}
+    .question-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .bubble{background:#f1ebde;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink-2)}
+    .options{display:grid;gap:12px;margin:22px 0}
+    .option{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:16px 18px;
+      cursor:pointer;
+      transition:.18s ease;
+      color:var(--ink);
+      font-size:16px;
+    }
+    .option:hover{border-color:#ccb483;background:#fcf9f2;transform:translateY(-1px)}
+    .option.selected{border-color:var(--gold);background:#fdf8ed;box-shadow:0 0 0 2px rgba(181,154,98,.13)}
+    .option strong{display:block;margin-bottom:4px;font-size:16px}
+    .option span{display:block;font-size:14px;color:var(--muted)}
+    .option-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .option-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    textarea,input{width:100%;border:1px solid var(--line);border-radius:16px;padding:14px 16px;font:inherit;color:var(--ink);background:#fff}
+    textarea{min-height:116px;resize:vertical}
+    textarea:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(181,154,98,.12)}
+    .helper{background:var(--soft);border:1px solid #eee5d5;border-radius:16px;padding:12px 14px;color:#51636b;font-size:14px;margin:10px 0 18px}
+    .error{display:none;color:var(--danger);font-size:14px;font-weight:700;margin:8px 0 14px}
+    .error.show{display:block}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      border:0;
+      border-radius:999px;
+      padding:14px 22px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn.primary{background:var(--ink);color:#fff}
+    .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+    .consent{display:flex;gap:10px;align-items:flex-start;margin:8px 0 10px}
+    .consent input{width:auto;margin-top:3px}
+    .scene-wrap{background:#fff;border:1px solid #ebdfcb;border-radius:24px;padding:18px;box-shadow:0 10px 30px rgba(23,53,68,.06)}
+    .scene-title{font-weight:700;margin-bottom:8px;color:var(--ink)}
+    .scene-desc{font-size:14px;color:var(--muted);margin-bottom:12px}
+    .scene{width:100%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#f7f0e3;border:1px solid #efe5d2}
+    .tip-card,.summary-card{background:#fff;border:1px solid #eadfce;border-radius:18px;padding:16px}
+    .tip-card h3,.summary-card h3{margin:0 0 10px;font-size:16px}
+    .tip-card p,.summary-card p{font-size:14px;color:#576972;margin:0}
+    .summary-points{padding-left:18px;margin:10px 0 0}
+    .summary-points li{margin:6px 0;color:#576972;font-size:14px}
+    .checkbox-list{display:grid;gap:10px;margin:20px 0}
+    .check-item{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+    .check-item input{width:auto;margin-top:2px}
+    .check-item strong{display:block}
+    .check-item span{display:block;font-size:14px;color:var(--muted)}
+    .ok-box{background:#eef7f2;border:1px solid #d5ebde;border-radius:18px;padding:14px 16px;color:#295c46;font-size:14px;margin:14px 0 18px}
+    @media (max-width: 960px){
+      .shell{grid-template-columns:1fr}
+      .side{border-left:0;border-top:1px solid #ece3d3;order:-1}
+      h1{font-size:34px}
+      h2{font-size:26px}
+    }
+    @media (max-width: 640px){
+      .content,.side{padding:22px}
+      .option-grid-2,.option-grid-3{grid-template-columns:1fr}
+      .actions .btn{width:100%}
+      h1{font-size:30px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <div class="content">
+        <div class="topbar">
+          <div class="brand">A Estrada • Paulo Roberto</div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+
+        <section class="q active" data-type="intro">
+          <div class="eyebrow">Experiência guiada de autopercepção</div>
+          <h1>Esta é a estrada da sua vida.</h1>
+          <p class="lead">Ao longo deste caminho, você encontrará situações que convidam a observar como percebe seus <strong>caminhos, escolhas, obstáculos, pausas e futuro</strong> hoje.</p>
+          <p>Não existem respostas certas ou erradas. Escolha aquilo que mais se aproxima do que você sente neste momento. Ao final, você poderá receber uma devolutiva com reflexões sobre o percurso que construiu.</p>
+          <div class="helper">A Estrada não é teste psicológico nem diagnóstico. É uma experiência de reflexão e autopercepção.</div>
+          <div class="actions">
+            <button class="btn primary" onclick="nextStep()">Começar minha estrada</button>
+          </div>
+        </section>
+
+        <section class="q" data-type="single" data-key="inicio">
+          <div class="question-meta"><span class="bubble">Pergunta 1 de 9</span></div>
+          <h2>1. Quando você olha para sua estrada hoje, como ela começa?</h2>
+          <p>Escolha a imagem que mais se aproxima da sensação que você tem ao pensar na sua vida neste momento.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="clara-aberta"><strong>Clara e aberta</strong><span>Você sente um começo mais visível e com espaço para avançar.</span></button>
+            <button class="option" data-value="estreita"><strong>Estreita</strong><span>Você percebe menos espaço, mais aperto ou limitação.</span></button>
+            <button class="option" data-value="subida"><strong>Com uma subida</strong><span>Há esforço, exigência ou sensação de desafio desde o começo.</span></button>
+            <button class="option" data-value="varios-caminhos"><strong>Com vários caminhos ou sentidos diferentes</strong><span>Há muitas possibilidades e talvez dúvidas sobre qual direção seguir.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="terreno">
+          <div class="question-meta"><span class="bubble">Pergunta 2 de 9</span></div>
+          <h2>2. Como é o terreno da sua estrada?</h2>
+          <p>O chão do caminho também diz muito sobre como a pessoa percebe o momento que está vivendo.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="pavimentado"><strong>Pavimentado</strong><span>Mais firme, organizado ou previsível.</span></button>
+            <button class="option" data-value="terra-limpa"><strong>De terra limpa</strong><span>Natural, simples, mas ainda caminhável.</span></button>
+            <button class="option" data-value="pedras"><strong>Cheio de pedras</strong><span>Irregular, exigindo atenção constante.</span></button>
+            <button class="option" data-value="derrapante"><strong>Derrapante ou escorregadio</strong><span>Instável, como se fosse fácil perder o equilíbrio.</span></button>
+            <button class="option" data-value="sujo"><strong>Sujo ou descuidado</strong><span>Pesado, desorganizado ou desgastado.</span></button>
+            <button class="option" data-value="esburacado"><strong>Esburacado</strong><span>Com interrupções, buracos ou dificuldades repetidas.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single+text" data-key="trajeto">
+          <div class="question-meta"><span class="bubble">Pergunta 3 de 9</span></div>
+          <h2>3. Como é o percurso quando você tenta olhar mais adiante?</h2>
+          <p>Pense no desenho do caminho e no quanto você consegue enxergar o que vem pela frente.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="reto"><strong>Reto</strong><span>O caminho parece mais direto ou objetivo.</span></button>
+            <button class="option" data-value="curvas"><strong>Cheio de curvas</strong><span>Há mudanças, voltas e incertezas ao longo do percurso.</span></button>
+            <button class="option" data-value="neblina"><strong>Com neblina ou pouca visibilidade</strong><span>É difícil enxergar claramente o que vem adiante.</span></button>
+            <button class="option" data-value="descida-ingreme"><strong>Com descida ou inclinação forte</strong><span>Há sensação de perda de controle ou necessidade de cuidado.</span></button>
+          </div>
+          <label for="trajetoObs">O que mais chama sua atenção nesse percurso?</label>
+          <textarea id="trajetoObs" placeholder="Escreva de forma simples o que mais chamou sua atenção..."></textarea>
+          <div class="error">Escolha uma opção e escreva brevemente o que mais chamou sua atenção.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="laterais">
+          <div class="question-meta"><span class="bubble">Pergunta 4 de 9</span></div>
+          <h2>4. O que mais aparece nas laterais da sua estrada?</h2>
+          <p>Observe o ambiente ao redor. Muitas vezes, ele se relaciona com a maneira como a pessoa percebe o seu momento.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="arvores"><strong>Árvores, vegetação ou natureza</strong><span>Há presença de vida, sombra, respiro ou crescimento.</span></button>
+            <button class="option" data-value="montanhas"><strong>Montanhas ou elevações</strong><span>O cenário traz altura, esforço, distância ou imponência.</span></button>
+            <button class="option" data-value="abismo"><strong>Abismo ou queda ao lado</strong><span>Existe sensação de risco, medo ou cuidado constante.</span></button>
+            <button class="option" data-value="pantano"><strong>Pântano ou terreno encharcado</strong><span>O caminho ao redor parece prender, pesar ou dificultar.</span></button>
+            <button class="option" data-value="cidade"><strong>Casas, cidade ou construções</strong><span>Há forte presença de vida social, pressão externa ou convivência.</span></button>
+            <button class="option" data-value="deserto"><strong>Deserto, vazio ou pouca vida</strong><span>O ambiente parece seco, isolado ou silencioso demais.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="presencas">
+          <div class="question-meta"><span class="bubble">Pergunta 5 de 9</span></div>
+          <h2>5. Há alguma presença que chama atenção ao redor da estrada?</h2>
+          <p>Nem sempre o caminho está sozinho. Pense no que se destaca no entorno.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="animais-selvagens"><strong>Animais selvagens</strong><span>O ambiente parece imprevisível, intenso ou ameaçador.</span></button>
+            <button class="option" data-value="passaros"><strong>Pássaros ou movimento no céu</strong><span>Há sensação de liberdade, distância ou busca por visão mais ampla.</span></button>
+            <button class="option" data-value="nenhuma"><strong>Não há nada que chame tanto atenção</strong><span>O foco está mais no próprio caminho do que no entorno.</span></button>
+            <button class="option" data-value="pessoas"><strong>Pessoas ou sinais de passagem</strong><span>Há marcas de convivência, comparação ou presença humana.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="companhia">
+          <div class="question-meta"><span class="bubble">Pergunta 6 de 9</span></div>
+          <h2>6. Você está caminhando...</h2>
+          <p>Pense em como você se percebe diante do próprio percurso.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="sozinho"><strong>Sozinho(a)</strong><span>O caminho parece mais individual e silencioso.</span></button>
+            <button class="option" data-value="com-alguem"><strong>Com alguém</strong><span>Existe presença próxima ou apoio específico.</span></button>
+            <button class="option" data-value="com-varias-pessoas"><strong>Com várias pessoas</strong><span>O percurso envolve grupo, família, exigências ou convivência intensa.</span></button>
+            <button class="option" data-value="nao-sei"><strong>Não sei dizer</strong><span>Há indefinição ou dificuldade de perceber quem está de fato com você.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="ritmo">
+          <div class="question-meta"><span class="bubble">Pergunta 7 de 9</span></div>
+          <h2>7. Como você percebe o seu ritmo nesse caminho?</h2>
+          <p>Não pense no ritmo ideal. Pense no ritmo real do momento atual.</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="devagar"><strong>Ando devagar</strong><span>É um movimento mais lento, cauteloso ou cansado.</span></button>
+            <button class="option" data-value="correndo"><strong>Ando correndo</strong><span>Há pressa, urgência ou pouco espaço para pausa.</span></button>
+            <button class="option" data-value="cuidado"><strong>Ando com muito cuidado</strong><span>O caminho exige atenção constante para não errar.</span></button>
+            <button class="option" data-value="travado"><strong>Quase não consigo andar</strong><span>O percurso parece pesado, travado ou difícil de sustentar.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="single" data-key="reacao">
+          <div class="question-meta"><span class="bubble">Pergunta 8 de 9</span></div>
+          <h2>8. Surge uma dificuldade no caminho. Qual é sua primeira reação?</h2>
+          <p>Quando algo interrompe o percurso, como você tende a reagir primeiro?</p>
+          <div class="options option-grid-2">
+            <button class="option" data-value="paro-observo"><strong>Paro e observo</strong><span>Tento entender antes de agir.</span></button>
+            <button class="option" data-value="tento-atravessar"><strong>Tento atravessar</strong><span>Procuro seguir em frente, mesmo com a dificuldade.</span></button>
+            <button class="option" data-value="procuro-outro"><strong>Procuro outro caminho</strong><span>Prefiro mudar a direção ou evitar o obstáculo.</span></button>
+            <button class="option" data-value="espero-ajuda"><strong>Espero alguém chegar</strong><span>Preciso de apoio ou presença antes de continuar.</span></button>
+          </div>
+          <div class="error">Escolha uma opção para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="multi3" data-key="paradas">
+          <div class="question-meta"><span class="bubble">Pergunta 9 de 9</span></div>
+          <h2>9. Se você precisasse fazer até 3 paradas nesse caminho, quais faria?</h2>
+          <p>Escolha <strong>até 3</strong> opções. Essas paradas podem revelar necessidades importantes no meio do percurso.</p>
+          <div class="checkbox-list">
+            <label class="check-item"><input type="checkbox" value="posto"><div><strong>Posto</strong><span>Preciso de abastecimento, energia ou sustentação.</span></div></label>
+            <label class="check-item"><input type="checkbox" value="restaurante"><div><strong>Restaurante</strong><span>Preciso de nutrição, acolhimento ou recuperação.</span></div></label>
+            <label class="check-item"><input type="checkbox" value="hotel"><div><strong>Hotel</strong><span>Preciso parar, descansar e me reorganizar.</span></div></label>
+            <label class="check-item"><input type="checkbox" value="mirante"><div><strong>Mirante</strong><span>Preciso enxergar melhor o todo antes de seguir.</span></div></label>
+            <label class="check-item"><input type="checkbox" value="posto-medico"><div><strong>Posto de atendimento</strong><span>Preciso de cuidado, ajuda ou intervenção.</span></div></label>
+            <label class="check-item"><input type="checkbox" value="capela"><div><strong>Espaço de oração ou silêncio</strong><span>Preciso de recolhimento, sentido ou interiorização.</span></div></label>
+          </div>
+          <div class="error">Escolha ao menos 1 parada e no máximo 3.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Continuar</button></div>
+        </section>
+
+        <section class="q" data-type="text" data-key="futuro">
+          <div class="question-meta"><span class="bubble">Fechamento do percurso</span></div>
+          <h2>10. Quando pensa no amanhã e no seu futuro, o que gostaria de encontrar ao final dessa estrada?</h2>
+          <p>Você pode escrever uma sensação, uma mudança, uma conquista, uma relação, um alívio ou um modo diferente de viver.</p>
+          <textarea id="futuroText" placeholder="Escreva com liberdade. Não precisa ser perfeito. O importante é ser verdadeiro para você."></textarea>
+          <div class="error">Escreva brevemente o que você gostaria de encontrar no amanhã e no futuro.</div>
+          <div class="actions"><button class="btn primary" onclick="nextStep()">Concluir meu percurso</button></div>
+        </section>
+
+        <section class="q" data-type="form">
+          <div class="eyebrow">Receber devolutiva</div>
+          <h2>Seu percurso está completo.</h2>
+          <p>Agora preencha os dados abaixo para receber sua devolutiva sobre a experiência A Estrada.</p>
+          <div class="helper">Esse preenchimento é muito importante para que você receba a devolutiva sobre a experiência A Estrada, bem como materiais gratuitos e educativos relacionados aos temas abordados.</div>
+          <label for="nome">Seu nome</label>
+          <input id="nome" type="text" placeholder="Digite seu nome" />
+          <label for="email">Seu melhor e-mail</label>
+          <input id="email" type="email" placeholder="exemplo@email.com" inputmode="email" />
+          <label for="whatsapp">WhatsApp com DDD</label>
+          <input id="whatsapp" type="tel" placeholder="(00) 00000-0000" inputmode="tel" />
+          <div class="consent"><input id="consent" type="checkbox" /><label for="consent">Autorizo o uso destes dados para receber minha devolutiva e comunicações relacionadas a esta experiência.</label></div>
+          <p class="small">Contato do projeto: <strong>pauloroberto.psicanalise@gmail.com</strong></p>
+          <div class="error">Preencha corretamente nome, e-mail e WhatsApp e confirme a autorização para continuar.</div>
+          <div class="actions"><button class="btn primary" onclick="submitJourney()">Receber minha devolutiva</button></div>
+        </section>
+
+        <section class="q" data-type="finish">
+          <div class="eyebrow">Percurso registrado</div>
+          <h2>Obrigado por caminhar.</h2>
+          <div class="ok-box"><strong>Sua devolutiva será enviada para o e-mail informado.</strong><br />Ela não é diagnóstico. É uma leitura de autopercepção construída a partir das escolhas e reflexões feitas ao longo do percurso.</div>
+          <p>Se você quiser conversar sobre a experiência ou entender melhor como funciona o acompanhamento, pode seguir agora para o WhatsApp.</p>
+          <div class="actions">
+            <a class="btn primary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Gostaria%20de%20saber%20mais%20sobre%20a%20experi%C3%AAncia%20A%20Estrada.">Quero saber mais sobre A Estrada</a>
+            <a class="btn secondary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Gostaria%20de%20entender%20mais%20sobre%20os%20atendimentos.">Entender mais sobre os atendimentos</a>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side">
+        <div class="scene-wrap">
+          <div class="scene-title" id="sceneTitle">Seu percurso começa aqui</div>
+          <div class="scene-desc" id="sceneDesc">Cada etapa mostra uma parte da estrada e convida você a refletir sobre o momento que está vivendo.</div>
+          <div class="scene" id="sceneBox"></div>
+        </div>
+
+        <div class="summary-card">
+          <h3>O que esta experiência trabalha?</h3>
+          <ul class="summary-points">
+            <li>Como você percebe seus caminhos hoje.</li>
+            <li>Que tipo de terreno, ambiente e ritmo predominam.</li>
+            <li>Como reage diante de dificuldades.</li>
+            <li>Que necessidades aparecem nas suas pausas e no futuro que imagina.</li>
+          </ul>
+        </div>
+
+        <div class="tip-card">
+          <h3>Importante</h3>
+          <p>As respostas não produzem diagnóstico. Elas ajudam a abrir perguntas, percepções e pontos de reflexão que podem ser aprofundados depois, se fizer sentido para você.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const questions = [...document.querySelectorAll('.q')];
+    const progressBar = document.getElementById('progressBar');
+    const sceneTitle = document.getElementById('sceneTitle');
+    const sceneDesc = document.getElementById('sceneDesc');
+    const sceneBox = document.getElementById('sceneBox');
+
+    const sceneData = [
+      {
+        title:'O início da jornada',
+        desc:'Uma estrada se abrindo diante de você: é assim que o percurso começa.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f5efe2"/>
+          <circle cx="320" cy="80" r="35" fill="#f2d79d"/>
+          <path d="M0 260 C70 210,120 190,200 185 C270 180,330 205,400 240 L400 400 L0 400 Z" fill="#97b27a"/>
+          <path d="M170 400 C180 320,188 265,200 185 C212 265,220 320,230 400 Z" fill="#b9975b"/>
+          <path d="M193 400 C196 322,198 255,200 185 C202 255,204 322,207 400 Z" fill="#e8d4a7"/>
+        </svg>`
+      },
+      {
+        title:'Como a estrada começa',
+        desc:'Uma entrada pode transmitir abertura, esforço, aperto ou indecisão.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f8f2e7"/>
+          <path d="M0 300 C90 230,145 220,200 215 C260 210,318 232,400 300 L400 400 L0 400 Z" fill="#a9c27f"/>
+          <path d="M185 400 C193 330,197 280,200 215" stroke="#b79153" stroke-width="48" fill="none" stroke-linecap="round"/>
+          <path d="M200 215 C170 185,150 160,132 135" stroke="#b79153" stroke-width="34" fill="none" stroke-linecap="round"/>
+          <path d="M200 215 C230 188,255 160,282 128" stroke="#b79153" stroke-width="34" fill="none" stroke-linecap="round"/>
+          <path d="M185 400 C193 330,197 280,200 215" stroke="#ead5a5" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="14 14"/>
+        </svg>`
+      },
+      {
+        title:'O terreno do caminho',
+        desc:'O chão da estrada pode parecer firme, irregular, sujo, escorregadio ou desgastado.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f7f2e7"/>
+          <rect x="90" y="0" width="220" height="400" fill="#b28a54"/>
+          <rect x="145" y="0" width="12" height="400" fill="#e9d6a7"/>
+          <rect x="243" y="0" width="12" height="400" fill="#e9d6a7"/>
+          <circle cx="145" cy="70" r="12" fill="#6f5f49"/><circle cx="240" cy="125" r="17" fill="#6f5f49"/><circle cx="210" cy="255" r="14" fill="#6f5f49"/>
+          <path d="M100 40 C190 60,260 20,300 50" stroke="#8c7151" stroke-width="10" opacity=".45"/>
+          <path d="M110 220 C170 260,240 230,290 260" stroke="#79654c" stroke-width="18" opacity=".20"/>
+        </svg>`
+      },
+      {
+        title:'O percurso mais adiante',
+        desc:'Às vezes o caminho parece claro. Em outras, há curvas, neblina ou inclinações fortes.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#eef1ef"/>
+          <path d="M0 330 L400 330 L400 400 L0 400 Z" fill="#88a370"/>
+          <path d="M170 400 C170 330,195 310,210 275 C226 238,206 220,220 185 C233 150,282 135,292 88" stroke="#a8824f" stroke-width="55" fill="none" stroke-linecap="round"/>
+          <path d="M170 400 C170 330,195 310,210 275 C226 238,206 220,220 185 C233 150,282 135,292 88" stroke="#ead7a6" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="14 14"/>
+          <g opacity=".45" fill="#fff"><circle cx="120" cy="90" r="30"/><circle cx="160" cy="110" r="38"/><circle cx="215" cy="92" r="32"/><circle cx="260" cy="118" r="40"/></g>
+        </svg>`
+      },
+      {
+        title:'O que existe nas laterais',
+        desc:'As laterais podem mostrar vida, risco, vazio, peso, altitude ou presença do mundo ao redor.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f4efe5"/>
+          <rect y="280" width="400" height="120" fill="#9fbb7c"/>
+          <path d="M175 400 C183 320,192 250,200 80 C208 250,217 320,225 400 Z" fill="#b28b56"/>
+          <path d="M198 400 C199 315,200 235,200 80 C200 235,201 315,202 400 Z" stroke="#e9d6a7" stroke-width="6" stroke-dasharray="12 12"/>
+          <path d="M40 280 L110 140 L180 280 Z" fill="#8ca17a"/>
+          <path d="M280 280 L320 180 L365 280 Z" fill="#6f7f8a"/>
+          <rect x="55" y="190" width="18" height="90" fill="#7e5d39"/><circle cx="64" cy="170" r="28" fill="#88a866"/>
+          <path d="M305 280 C315 248,330 240,350 235 C346 250,352 262,360 280 Z" fill="#4b6172"/>
+        </svg>`
+      },
+      {
+        title:'Presenças no entorno',
+        desc:'O ambiente pode trazer sinais de ameaça, liberdade, pessoas ou apenas silêncio.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f6f1e8"/>
+          <rect y="280" width="400" height="120" fill="#a9c27f"/>
+          <path d="M165 400 C180 325,188 240,200 100 C212 240,220 325,235 400 Z" fill="#ad8752"/>
+          <path d="M198 400 C199 315,200 230,200 100" stroke="#e9d5a6" stroke-width="6" stroke-dasharray="12 12"/>
+          <path d="M60 120 q18 -26 36 0 q-8 -8 -18 0 q-10 -8 -18 0 Z" fill="#64757f"/>
+          <path d="M110 100 q18 -26 36 0 q-8 -8 -18 0 q-10 -8 -18 0 Z" fill="#64757f"/>
+          <path d="M285 255 q20 -35 40 0" stroke="#8d6846" stroke-width="7" fill="none"/>
+          <circle cx="323" cy="250" r="5" fill="#8d6846"/>
+          <rect x="268" y="188" width="22" height="70" fill="#7c5c39"/><rect x="305" y="205" width="24" height="53" fill="#7c5c39"/>
+        </svg>`
+      },
+      {
+        title:'Companhia e presença',
+        desc:'Em alguns momentos o caminho é solitário. Em outros, é compartilhado.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f4efe3"/>
+          <rect y="300" width="400" height="100" fill="#9db97c"/>
+          <path d="M165 400 C178 320,191 255,200 135 C209 255,222 320,235 400 Z" fill="#af8854"/>
+          <path d="M198 400 C199 320,200 255,200 135" stroke="#ead7a6" stroke-width="6" stroke-dasharray="12 12"/>
+          <circle cx="170" cy="250" r="16" fill="#556c7a"/><rect x="158" y="265" width="24" height="42" rx="10" fill="#556c7a"/>
+          <circle cx="228" cy="230" r="16" fill="#7b8f55"/><rect x="216" y="245" width="24" height="48" rx="10" fill="#7b8f55"/>
+          <circle cx="202" cy="275" r="14" fill="#a45f4e"/><rect x="191" y="288" width="22" height="38" rx="10" fill="#a45f4e"/>
+        </svg>`
+      },
+      {
+        title:'Seu ritmo no percurso',
+        desc:'O modo como você anda também fala do momento: devagar, correndo, com cuidado ou quase travado.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f6f0e5"/>
+          <rect y="300" width="400" height="100" fill="#adc67f"/>
+          <path d="M170 400 C182 330,191 250,200 110 C209 250,218 330,230 400 Z" fill="#b48e58"/>
+          <path d="M198 400 C199 322,200 248,200 110" stroke="#ecd8a9" stroke-width="6" stroke-dasharray="12 12"/>
+          <circle cx="175" cy="250" r="18" fill="#31576c"/>
+          <path d="M174 268 L192 295 L172 325" stroke="#31576c" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M190 285 L218 275" stroke="#31576c" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M170 290 L148 305" stroke="#31576c" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M130 236 l22 -10" stroke="#9fb7c0" stroke-width="8" opacity=".6"/>
+          <path d="M120 258 l28 -8" stroke="#9fb7c0" stroke-width="8" opacity=".4"/>
+        </svg>`
+      },
+      {
+        title:'Dificuldade no caminho',
+        desc:'Toda estrada encontra algum obstáculo. A primeira reação também ensina algo.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f5efe4"/>
+          <rect y="290" width="400" height="110" fill="#a5bf7d"/>
+          <path d="M160 400 C175 320,188 250,200 95 C212 250,225 320,240 400 Z" fill="#b28a54"/>
+          <path d="M198 400 C199 317,200 238,200 95" stroke="#ead5a7" stroke-width="6" stroke-dasharray="12 12"/>
+          <rect x="150" y="205" width="100" height="20" rx="8" fill="#81583e" transform="rotate(-18 200 215)"/>
+          <circle cx="200" cy="260" r="15" fill="#496577"/>
+          <path d="M200 275 L200 315" stroke="#496577" stroke-width="10" stroke-linecap="round"/>
+          <path d="M200 292 L172 314" stroke="#496577" stroke-width="10" stroke-linecap="round"/>
+          <path d="M200 292 L228 305" stroke="#496577" stroke-width="10" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        title:'As paradas do percurso',
+        desc:'As pausas podem revelar necessidades de descanso, cuidado, nutrição, direção ou sentido.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f7f1e6"/>
+          <rect y="300" width="400" height="100" fill="#aac57f"/>
+          <path d="M175 400 C185 330,193 252,200 110 C207 252,215 330,225 400 Z" fill="#b28a54"/>
+          <path d="M198 400 C199 320,200 250,200 110" stroke="#ead7a6" stroke-width="6" stroke-dasharray="12 12"/>
+          <rect x="102" y="160" width="8" height="90" fill="#7d5e3a"/><rect x="100" y="150" width="65" height="30" rx="6" fill="#fff" stroke="#cbb68b"/>
+          <rect x="236" y="116" width="8" height="90" fill="#7d5e3a"/><rect x="186" y="106" width="100" height="30" rx="6" fill="#fff" stroke="#cbb68b"/>
+          <rect x="292" y="205" width="8" height="90" fill="#7d5e3a"/><rect x="242" y="195" width="100" height="30" rx="6" fill="#fff" stroke="#cbb68b"/>
+        </svg>`
+      },
+      {
+        title:'O que você espera do futuro',
+        desc:'O final da estrada aponta para aquilo que você deseja, procura ou sente falta hoje.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f8ebc5"/><stop offset="100%" stop-color="#fff7e7"/></linearGradient></defs>
+          <rect width="400" height="400" fill="url(#g)"/>
+          <circle cx="200" cy="120" r="52" fill="#f1ce84"/>
+          <path d="M0 310 C90 240,150 215,200 215 C255 215,318 240,400 312 L400 400 L0 400 Z" fill="#9ab47b"/>
+          <path d="M170 400 C182 330,191 275,200 215 C209 275,218 330,230 400 Z" fill="#b48b56"/>
+          <path d="M198 400 C199 320,200 275,200 215" stroke="#ead6a5" stroke-width="6" stroke-dasharray="12 12"/>
+        </svg>`
+      },
+      {
+        title:'Receber devolutiva',
+        desc:'Seus dados são necessários para enviar a leitura da experiência e os próximos materiais.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#f8f2e8"/>
+          <rect x="75" y="90" width="250" height="220" rx="24" fill="#fff" stroke="#e5dac8"/>
+          <rect x="105" y="130" width="190" height="20" rx="10" fill="#edf1f3"/>
+          <rect x="105" y="170" width="190" height="20" rx="10" fill="#edf1f3"/>
+          <rect x="105" y="210" width="190" height="20" rx="10" fill="#edf1f3"/>
+          <rect x="105" y="255" width="110" height="28" rx="14" fill="#b59a62"/>
+          <path d="M290 118 l25 18 -25 18" stroke="#d1bc91" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`
+      },
+      {
+        title:'Percurso finalizado',
+        desc:'Sua jornada foi registrada e agora pode seguir para a devolutiva e o próximo passo.',
+        svg:`<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="400" fill="#eff7f1"/>
+          <circle cx="200" cy="170" r="88" fill="#dcefe3"/>
+          <circle cx="200" cy="170" r="54" fill="#2b8f64"/>
+          <path d="M173 168 l18 18 l36 -42" stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M130 310 C155 285,182 274,200 274 C220 274,248 286,272 310" stroke="#95b89d" stroke-width="14" fill="none" stroke-linecap="round"/>
+        </svg>`
+      }
+    ];
+
+    const answers = {};
+    let current = 0;
+
+    function setOptionHandlers(){
+      document.querySelectorAll('.option').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          btn.parentElement.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+          btn.classList.add('selected');
+          btn.closest('.q').querySelector('.error')?.classList.remove('show');
+        });
+      });
+
+      const stopSection = document.querySelector('[data-key="paradas"]');
+      if(stopSection){
+        stopSection.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+          cb.addEventListener('change',()=>{
+            const checked = [...stopSection.querySelectorAll('input[type="checkbox"]:checked')];
+            if(checked.length > 3){
+              cb.checked = false;
+              alert('Você pode escolher no máximo 3 paradas.');
+              return;
+            }
+            stopSection.querySelector('.error')?.classList.remove('show');
+          });
+        });
+      }
+    }
+
+    function updateScene(){
+      const scene = sceneData[current] || sceneData[sceneData.length-1];
+      sceneTitle.textContent = scene.title;
+      sceneDesc.textContent = scene.desc;
+      sceneBox.innerHTML = scene.svg;
+    }
+
+    function updateProgress(){
+      const pct = (current/(questions.length-1))*100;
+      progressBar.style.width = pct + '%';
+    }
+
+    function showStep(index){
+      current = index;
+      questions.forEach((q,i)=>q.classList.toggle('active', i===current));
+      updateScene();
+      updateProgress();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function validateStep(){
+      const step = questions[current];
+      const type = step.dataset.type;
+      const error = step.querySelector('.error');
+      if(error) error.classList.remove('show');
+
+      if(type === 'intro' || type === 'finish') return true;
+
+      if(type === 'single'){
+        const selected = step.querySelector('.option.selected');
+        if(!selected){ error?.classList.add('show'); return false; }
+        answers[step.dataset.key] = selected.dataset.value;
+        return true;
+      }
+
+      if(type === 'single+text'){
+        const selected = step.querySelector('.option.selected');
+        const text = step.querySelector('textarea').value.trim();
+        if(!selected || text.length < 5){ error?.classList.add('show'); return false; }
+        answers[step.dataset.key] = {choice:selected.dataset.value, note:text};
+        return true;
+      }
+
+      if(type === 'multi3'){
+        const selected = [...step.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
+        if(selected.length < 1 || selected.length > 3){ error?.classList.add('show'); return false; }
+        answers[step.dataset.key] = selected;
+        return true;
+      }
+
+      if(type === 'text'){
+        const text = step.querySelector('textarea').value.trim();
+        if(text.length < 8){ error?.classList.add('show'); return false; }
+        answers[step.dataset.key] = text;
+        return true;
+      }
+
+      if(type === 'form'){
+        const nome = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const whatsapp = document.getElementById('whatsapp').value.trim();
+        const consent = document.getElementById('consent').checked;
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const digits = whatsapp.replace(/\D/g,'');
+        const phoneOk = digits.length >= 10 && digits.length <= 13;
+        const nomeOk = nome.length >= 3;
+
+        if(!nomeOk || !emailOk || !phoneOk || !consent){ error?.classList.add('show'); return false; }
+        answers.contato = {nome,email,whatsapp,consent};
+        return true;
+      }
+      return true;
+    }
+
+    function nextStep(){
+      if(!validateStep()) return;
+      if(current < questions.length-1){
+        showStep(current+1);
+      }
+    }
+
+    function submitJourney(){
+      if(!validateStep()) return;
+      // ponto de integração futuro: enviar answers + utms + leadId para Apps Script / n8n / CRM
+      console.log('A Estrada submission', answers);
+      showStep(current+1);
+    }
+
+    setOptionHandlers();
+    updateScene();
+    updateProgress();
+  </script>
+</body>
+</html>
