@@ -3,53 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sua Devolutiva | A Estrada</title>
-<meta name="description" content="Página da devolutiva da experiência A Estrada.">
+<title>Validação da Devolutiva | A Estrada</title>
+<meta name="description" content="Modelo de validação da devolutiva da experiência A Estrada.">
 <style>
-:root{--ink:#173544;--ink2:#274c5e;--gold:#b59a62;--paper:#f7f4ed;--white:#fff;--muted:#667780;--line:#e4ddcf;--soft:#fbf8f1}
+:root{--ink:#173544;--gold:#b59a62;--muted:#667780;--line:#e4ddcf;--soft:#fbf8f1}
 *{box-sizing:border-box}body{margin:0;background:#f4f1ea;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
-.page{max-width:840px;margin:40px auto;padding:0 18px}.card{background:#fff;border:1px solid #e7dfd2;border-radius:28px;overflow:hidden;box-shadow:0 24px 70px rgba(23,53,68,.11)}
-.hero{padding:48px 50px 36px;background:linear-gradient(135deg,#faf7ef,#f4eee2);border-bottom:1px solid var(--line)}
+.page{max-width:940px;margin:40px auto;padding:0 18px}.report{background:#fff;border:1px solid #e7dfd2;border-radius:28px;overflow:hidden;box-shadow:0 24px 70px rgba(23,53,68,.11)}
+.hero{padding:48px 52px 36px;background:linear-gradient(135deg,#faf7ef,#f4eee2);border-bottom:1px solid var(--line)}
 .ey{font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-h1,h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;margin:0 0 14px}h1{font-size:44px;line-height:1.08}.lead{font-size:18px;color:#435963}
-.content{padding:38px 50px}.box{background:var(--soft);border:1px solid #ece3d4;border-radius:20px;padding:22px;margin:18px 0}
-.meta{font-size:13px;color:var(--muted)}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-.btn{display:inline-flex;text-decoration:none;border-radius:999px;padding:14px 22px;font-weight:700}.primary{background:var(--ink);color:#fff}.secondary{border:1px solid var(--ink);color:var(--ink)}
-.footer{padding:26px 50px;background:#fbfaf7;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
-@media(max-width:640px){.hero,.content,.footer{padding-left:24px;padding-right:24px}h1{font-size:36px}.actions .btn{width:100%;justify-content:center}}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:400;margin-top:0}h1{font-size:46px;line-height:1.05;margin-bottom:12px}h2{font-size:30px}
+.lead{font-size:18px;color:#435963}.content{padding:40px 52px}.validation{background:#fff6db;border:1px solid #ead69b;border-radius:18px;padding:16px 18px;margin-bottom:28px}
+.block{padding:26px 0;border-top:1px solid var(--line)}.block:first-of-type{border-top:0}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff}.tag{display:inline-block;background:#f4eddf;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.direction{background:var(--soft);border-left:4px solid var(--gold);padding:18px 20px;font-family:Georgia,'Times New Roman',serif;font-size:21px}
+.checks{background:#f8fafb;border:1px solid var(--line);border-radius:20px;padding:22px}.checks li{margin:8px 0}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:999px;padding:14px 22px;font-weight:700}
+.primary{background:var(--ink);color:#fff}.secondary{border:1px solid var(--ink);color:var(--ink)}.footer{padding:28px 52px;background:#fbfaf7;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@media(max-width:700px){.hero,.content,.footer{padding-left:24px;padding-right:24px}.cards{grid-template-columns:1fr}h1{font-size:36px}.actions .btn{width:100%}}
 </style>
 </head>
 <body>
 <div class="page">
-  <article class="card">
-    <header class="hero">
-      <div class="ey">A Estrada • Sua devolutiva</div>
-      <h1>Seu percurso foi registrado.</h1>
-      <p class="lead">Esta é a página vinculada à sua experiência A Estrada.</p>
-    </header>
-    <main class="content">
-      <div class="box">
-        <strong>Devolutiva interpretativa em validação.</strong>
-        <p>Nesta fase de homologação, a leitura interpretativa automática ainda não está liberada. A matriz de interpretação será utilizada somente após a validação de Paulo Roberto.</p>
-        <p>Isso evita apresentar como leitura individual algo que ainda não passou pela revisão profissional prevista para o método.</p>
-      </div>
-      <p class="meta" id="leadRef"></p>
-      <p>Enquanto isso, você pode conversar com Paulo Roberto sobre a experiência ou conhecer como funciona o acompanhamento.</p>
-      <div class="actions">
-        <a class="btn primary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Fiz%20A%20Estrada%20e%20gostaria%20de%20conversar%20sobre%20a%20experi%C3%AAncia.">Conversar sobre A Estrada</a>
-        <a class="btn secondary" href="../">Voltar para A Estrada</a>
-      </div>
-    </main>
-    <footer class="footer">
-      <strong>Paulo Roberto • Psicanálise Online</strong><br>
-      pauloroberto.psicanalise@gmail.com
-      <p>A Estrada é uma experiência guiada de autopercepção. Não é teste psicológico e não produz diagnóstico.</p>
-    </footer>
-  </article>
+<article class="report">
+<header class="hero">
+<div class="ey">A Estrada • Validação profissional</div>
+<h1>Modelo da devolutiva</h1>
+<p class="lead">Esta página está liberada para Paulo Roberto revisar estrutura, linguagem, profundidade e limites da devolutiva antes do uso definitivo com o público.</p>
+</header>
+<main class="content">
+<div class="validation"><strong>VERSÃO PARA VALIDAÇÃO</strong><br>Os textos abaixo são exemplos de estrutura e linguagem. Não correspondem a uma pessoa real e não constituem diagnóstico.</div>
+
+<section class="block">
+<div class="ey">Leitura predominante</div>
+<h2>Reorganização e Clareza</h2>
+<p>Exemplo: o percurso pode sugerir um momento em que compreender melhor a direção parece mais importante do que acelerar decisões.</p>
+</section>
+
+<section class="block">
+<div class="ey">Pontos do percurso</div>
+<h2>Como a leitura será apresentada</h2>
+<div class="cards">
+<div class="card"><div class="tag">Caminho</div><h3>Direção</h3><p>Uma leitura curta, construída a partir das escolhas da experiência, sempre apresentada como hipótese de autopercepção.</p></div>
+<div class="card"><div class="tag">Ritmo</div><h3>Energia e pausa</h3><p>O texto observa o ritmo percebido sem transformar uma escolha em rótulo, diagnóstico ou afirmação sobre a pessoa.</p></div>
+<div class="card"><div class="tag">Apoio</div><h3>Presença e vínculo</h3><p>Quando o percurso indicar necessidade de apoio, a linguagem deve abrir reflexão sem afirmar solidão objetiva.</p></div>
+<div class="card"><div class="tag">Futuro</div><h3>Desejos e direção</h3><p>O texto livre do participante ajuda a destacar temas importantes sem interpretar além do que foi informado.</p></div>
 </div>
-<script>
-const lead=new URLSearchParams(location.search).get('lead');
-if(lead){document.getElementById('leadRef').textContent='Referência da experiência: '+lead;}
-</script>
+</section>
+
+<section class="block">
+<div class="ey">Mensagem de continuidade</div>
+<div class="direction">“Talvez este seja um momento de ganhar clareza antes de exigir tanto de si.”</div>
+</section>
+
+<section class="block">
+<div class="checks">
+<h2>O que Paulo deve validar</h2>
+<ul>
+<li>Se a linguagem está acolhedora sem parecer diagnóstica.</li>
+<li>Se as leituras-base fazem sentido dentro da proposta de A Estrada.</li>
+<li>Se perguntas e mensagens de continuidade respeitam a autonomia da pessoa.</li>
+<li>Se algum símbolo ou combinação está sendo interpretado de forma rígida demais.</li>
+<li>Se a profundidade é adequada para uma experiência inicial gratuita.</li>
+<li>Se o CTA final conduz à conversa profissional sem pressão para iniciar atendimento.</li>
+</ul>
+</div>
+</section>
+
+<section class="block">
+<p><strong>Princípio de governança:</strong> nenhuma interpretação deve ser tratada como significado universal de um símbolo. A pessoa continua sendo a principal referência sobre o que cada elemento representa em sua própria história.</p>
+<div class="actions">
+<a class="btn primary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Gostaria%20de%20conversar%20sobre%20a%20valida%C3%A7%C3%A3o%20da%20devolutiva%20de%20A%20Estrada.">Conversar sobre a validação</a>
+<a class="btn secondary" href="../">Voltar para A Estrada</a>
+</div>
+</section>
+</main>
+<footer class="footer"><strong>Paulo Roberto • Psicanálise Online</strong><br>pauloroberto.psicanalise@gmail.com<br><br>A Estrada é uma experiência guiada de autopercepção. Não é teste psicológico e não produz diagnóstico.</footer>
+</article>
+</div>
 </body>
 </html>
