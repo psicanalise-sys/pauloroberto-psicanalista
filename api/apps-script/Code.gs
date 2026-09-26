@@ -5,8 +5,9 @@ const CONFIG = {
   EMAIL_REPLY_TO: 'pauloroberto.psicanalise@gmail.com',
   WHATSAPP: '5541999314077',
   RESULT_BASE_URL: 'https://psicanalise-sys.github.io/pauloroberto-psicanalista/experiencias/a-estrada/resultado.html',
-  VERSION: '2.3.2-dev',
-  ENABLE_INTERPRETIVE_RESULT: false
+  VERSION: '2.5-dev',
+  ENABLE_INTERPRETIVE_RESULT: true,
+  VALIDATION_MODE: true
 };
 
 function doGet() {
@@ -125,7 +126,8 @@ function buildInterpretiveResult_(answers) {
     const row = values[i];
     const code = String(row[0] || '').trim();
     const status = String(row[17] || '').trim().toLowerCase();
-    if (code && status === 'aprovado') {
+    const allowed = status === 'aprovado' || (CONFIG.VALIDATION_MODE && status === 'pendente');
+    if (code && allowed) {
       approved[code] = {
         tag: row[3] || '',
         reading: row[14] || '',
@@ -159,29 +161,91 @@ function buildInterpretiveResult_(answers) {
     if (code && approved[code]) blocks.push(approved[code]);
   });
 
+  const allRows = [];
+  Object.keys(codeMap).forEach(key => {
+    const rawValue = key === 'trajeto' ? choice_(answers[key]) : answers[key];
+    const code = codeMap[key][rawValue];
+    if (code && approved[code]) allRows.push(approved[code]);
+  });
+  (answers.paradas || []).forEach(v => {
+    const code = stopMap[v];
+    if (code && approved[code]) allRows.push(approved[code]);
+  });
+
+  const tags = [...new Set(allRows.map(b => b.tag).filter(Boolean))];
+  const future = String(answers.futuro || '').toLowerCase();
+  ['paz','leveza','descanso','recomeço','segurança','vínculo','sentido','coragem','reconciliação','direção','clareza'].forEach(k => {
+    if (future.indexOf(k) >= 0 && tags.indexOf(k) < 0) tags.push(k);
+  });
+
+  let profile = 'Leitura equilibrada';
+  let profileReading = 'Seu percurso reúne sinais diferentes. Observe quais partes desta leitura realmente representam o seu momento.';
+  let direction = 'Nem toda estrada pede uma resposta imediata. Às vezes, perceber melhor o caminho já muda a forma de seguir.';
+
+  const valuesByTag = tags.join(' ');
+  if (valuesByTag.indexOf('urgência') >= 0 || valuesByTag.indexOf('travamento') >= 0 || valuesByTag.indexOf('irregularidade') >= 0) {
+    profile = 'Sobrecarga e Travessia';
+    profileReading = 'O percurso sugere esforço prolongado e necessidade de reorganizar a travessia.';
+    direction = 'Nem sempre força significa continuar no mesmo ritmo.';
+  }
+  if (valuesByTag.indexOf('instabilidade') >= 0 || valuesByTag.indexOf('ameaça') >= 0) {
+    profile = 'Instabilidade e Cautela';
+    profileReading = 'O caminho é percebido com instabilidade e necessidade de proteção.';
+    direction = 'Quando o chão parece instável, cuidado pode ser uma forma de preservação.';
+  }
+  if (valuesByTag.indexOf('solidão') >= 0 || valuesByTag.indexOf('isolamento') >= 0 || valuesByTag.indexOf('apoio necessário') >= 0) {
+    profile = 'Solidão e Necessidade de Apoio';
+    profileReading = 'O percurso sugere que apoio e presença podem estar fazendo falta.';
+    direction = 'Há momentos em que o caminho pesa mais porque tentamos sustentá-lo sozinhos.';
+  }
+  if (valuesByTag.indexOf('indecisão') >= 0 || valuesByTag.indexOf('incerteza') >= 0 || (answers.paradas || []).indexOf('mirante') >= 0) {
+    profile = 'Reorganização e Clareza';
+    profileReading = 'O momento parece pedir compreensão e direção antes de velocidade.';
+    direction = 'Talvez este seja um momento de ganhar clareza antes de exigir mais de si.';
+  }
+  if (valuesByTag.indexOf('sentido') >= 0 || valuesByTag.indexOf('perspectiva') >= 0 || valuesByTag.indexOf('crescimento') >= 0) {
+    profile = 'Sentido, Respiro e Redirecionamento';
+    profileReading = 'A estrada aponta para busca de reconexão, perspectiva e sentido.';
+    direction = 'Algumas buscas não são apenas por solução, mas por um modo mais inteiro de viver.';
+  }
+
   return {
-    enabled: blocks.length > 0,
-    profile: '',
-    tags: [...new Set(blocks.map(b => b.tag).filter(Boolean))],
-    blocks: blocks.slice(0, 4)
+    enabled: allRows.length > 0,
+    profile: profile,
+    profileReading: profileReading,
+    direction: direction,
+    tags: tags,
+    blocks: allRows.slice(0, 6),
+    validation: CONFIG.VALIDATION_MODE
   };
 }
 
 function sendResultEmail_(r) {
   const firstName = String(r.contact.nome || '').trim().split(/\s+/)[0] || 'Olá';
-  const subject = 'A Estrada — sua experiência foi registrada';
+  const subject = 'A Estrada — sua devolutiva';
 
   let body = '<p>Olá, ' + escapeHtml_(firstName) + '.</p>' +
     '<p>Seu percurso em <strong>A Estrada</strong> foi registrado.</p>';
 
   if (r.analysis.enabled) {
-    body += '<p>Abaixo estão alguns pontos de reflexão construídos apenas com elementos previamente validados por Paulo Roberto. Eles não constituem diagnóstico.</p>';
+    body += '<p><strong>Leitura predominante: ' + escapeHtml_(r.analysis.profile) + '</strong></p>' +
+      '<p>' + escapeHtml_(r.analysis.profileReading || '') + '</p>' +
+      '<p>Abaixo estão os principais pontos de reflexão construídos a partir do percurso que você criou.</p>';
     r.analysis.blocks.forEach(b => {
       body += '<div style="margin:18px 0;padding:16px;border-left:3px solid #b59a62;background:#faf7f0">' +
         '<p><strong>' + escapeHtml_(b.reading) + '</strong></p>' +
         '<p>' + escapeHtml_(b.question) + '</p>' +
         '<p>' + escapeHtml_(b.continuation) + '</p></div>';
     });
+    if (r.analysis.direction) {
+      body += '<p><strong>Uma mensagem para continuar:</strong><br>' + escapeHtml_(r.analysis.direction) + '</p>';
+    }
+    if (r.analysis.tags && r.analysis.tags.length) {
+      body += '<p><strong>Temas presentes no percurso:</strong> ' + escapeHtml_(r.analysis.tags.join(', ')) + '</p>';
+    }
+    if (CONFIG.VALIDATION_MODE) {
+      body += '<p style="font-size:12px;color:#8a6d1d"><strong>Observação:</strong> esta versão está em período de validação.</p>';
+    }
   } else {
     body += '<p>Nesta fase de homologação, a leitura interpretativa automática permanece desativada até a validação final da matriz por Paulo Roberto. Seus dados e respostas foram registrados para a devolutiva.</p>';
   }
