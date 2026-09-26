@@ -545,8 +545,47 @@
       }
     ];
 
+    // Integração preparada para Apps Script. Preencha a URL após o deploy do Web App.
+    const API_ENDPOINT = window.A_ESTRADA_API_ENDPOINT || '';
+    const EXPERIENCE_VERSION = '2.3-dev';
+    const startedAt = new Date().toISOString();
     const answers = {};
     let current = 0;
+
+    function collectTracking(){
+      const params = new URLSearchParams(window.location.search);
+      return {
+        utm_source: params.get('utm_source') || '',
+        utm_medium: params.get('utm_medium') || '',
+        utm_campaign: params.get('utm_campaign') || '',
+        utm_content: params.get('utm_content') || '',
+        utm_term: params.get('utm_term') || '',
+        landing_url: window.location.href
+      };
+    }
+
+    function buildPayload(){
+      return {
+        event: 'estrada_completed',
+        version: EXPERIENCE_VERSION,
+        started_at: startedAt,
+        completed_at: new Date().toISOString(),
+        tracking: collectTracking(),
+        answers
+      };
+    }
+
+    function setSubmitState(button, busy){
+      if(!button) return;
+      if(busy){
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Enviando...';
+        button.disabled = true;
+      } else {
+        button.textContent = button.dataset.originalText || 'Receber minha devolutiva';
+        button.disabled = false;
+      }
+    }
 
     function setOptionHandlers(){
       document.querySelectorAll('.option').forEach(btn=>{
@@ -654,11 +693,51 @@
       }
     }
 
-    function submitJourney(){
+    async function submitJourney(){
       if(!validateStep()) return;
-      // ponto de integração futuro: enviar answers + utms + leadId para Apps Script / n8n / CRM
-      console.log('A Estrada submission', answers);
-      showStep(current+1);
+
+      const button = document.querySelector('.q.active .btn.primary');
+      const payload = buildPayload();
+
+      // Mantém uma cópia local até o backend confirmar o recebimento.
+      try {
+        localStorage.setItem('a_estrada_pending_submission', JSON.stringify(payload));
+      } catch(e) {}
+
+      if(!API_ENDPOINT){
+        alert('A integração de envio ainda está em homologação. Seus dados não foram enviados. Tente novamente após a publicação do backend.');
+        return;
+      }
+
+      setSubmitState(button, true);
+      try {
+        const body = new URLSearchParams();
+        body.set('payload', JSON.stringify(payload));
+
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+          body: body.toString(),
+          redirect: 'follow'
+        });
+
+        if(!response.ok) throw new Error('HTTP ' + response.status);
+
+        let result = {};
+        try { result = await response.json(); } catch(e) {}
+
+        if(result && result.ok === false) throw new Error(result.error || 'Falha no registro');
+
+        try { localStorage.removeItem('a_estrada_pending_submission'); } catch(e) {}
+        if(result && result.lead_id) answers.lead_id = result.lead_id;
+
+        showStep(current+1);
+      } catch(err) {
+        console.error('A Estrada submission error', err);
+        alert('Não foi possível concluir o envio agora. Suas respostas permanecem neste dispositivo. Tente novamente em alguns instantes.');
+      } finally {
+        setSubmitState(button, false);
+      }
     }
 
     setOptionHandlers();
