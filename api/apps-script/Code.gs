@@ -4,7 +4,7 @@ const CONFIG = {
   EMAIL_FROM_NAME: 'Paulo Roberto | Psicanálise',
   EMAIL_REPLY_TO: 'pauloroberto.psicanalise@gmail.com',
   WHATSAPP: '5541999314077',
-  VERSION: '2.3-dev',
+  VERSION: '2.3.1-dev',
   ENABLE_INTERPRETIVE_RESULT: false
 };
 
@@ -74,19 +74,19 @@ function registerJourney_(p) {
   estrada.appendRow([
     leadId, safeDate_(p.started_at), now,
     clean_(a.inicio),
-    joinParts_([a.terreno, a.trajeto]),
+    joinParts_([a.terreno, choice_(a.trajeto)]),
     joinParts_([a.laterais, a.presencas]),
     clean_(a.companhia),
     clean_(a.ritmo),
     clean_(a.reacao),
     clean_(stops[0]), clean_(stops[1]), clean_(stops[2]),
     clean_(a.futuro),
-    '',
+    note_(a.trajeto),
     analysis.tags.join(', '),
     analysis.profile,
     resultStatus,
     '',
-    clean_(a.terreno), clean_(a.trajeto), clean_(a.laterais), clean_(a.presencas),
+    clean_(a.terreno), choice_(a.trajeto), clean_(a.laterais), clean_(a.presencas),
     clean_(a.ritmo), clean_(a.reacao), clean_(a.futuro),
     clean_(t.utm_campaign), clean_(t.utm_content), clean_(t.utm_term),
     clean_(t.landing_url), c.consent ? 'Sim' : 'Não',
@@ -147,7 +147,8 @@ function buildInterpretiveResult_(answers) {
 
   const blocks = [];
   Object.keys(codeMap).forEach(key => {
-    const code = codeMap[key][answers[key]];
+    const rawValue = key === 'trajeto' ? choice_(answers[key]) : answers[key];
+    const code = codeMap[key][rawValue];
     if (code && approved[code]) blocks.push(approved[code]);
   });
 
@@ -218,6 +219,16 @@ function clean_(v) {
   if (v === null || v === undefined) return '';
   if (typeof v === 'object') return JSON.stringify(v);
   return String(v).trim();
+}
+
+function choice_(v) {
+  if (v && typeof v === 'object' && !Array.isArray(v)) return clean_(v.choice);
+  return clean_(v);
+}
+
+function note_(v) {
+  if (v && typeof v === 'object' && !Array.isArray(v)) return clean_(v.note);
+  return '';
 }
 
 function joinParts_(arr) {
