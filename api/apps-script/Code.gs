@@ -4,7 +4,8 @@ const CONFIG = {
   EMAIL_FROM_NAME: 'Paulo Roberto | Psicanálise',
   EMAIL_REPLY_TO: 'pauloroberto.psicanalise@gmail.com',
   WHATSAPP: '5541999314077',
-  VERSION: '2.3.1-dev',
+  RESULT_BASE_URL: 'https://psicanalise-sys.github.io/pauloroberto-psicanalista/experiencias/a-estrada/resultado.html',
+  VERSION: '2.3.2-dev',
   ENABLE_INTERPRETIVE_RESULT: false
 };
 
@@ -185,10 +186,14 @@ function sendResultEmail_(r) {
     body += '<p>Nesta fase de homologação, a leitura interpretativa automática permanece desativada até a validação final da matriz por Paulo Roberto. Seus dados e respostas foram registrados para a devolutiva.</p>';
   }
 
+  const resultUrl = CONFIG.RESULT_BASE_URL + '?lead=' + encodeURIComponent(r.leadId);
+
   const wa = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' +
     encodeURIComponent('Olá, Dr. Paulo. Fiz A Estrada e gostaria de agendar uma conversa inicial gratuita de 15 minutos para conhecer melhor seu trabalho.');
 
-  body += '<p>Se fizer sentido, você pode agendar uma conversa inicial gratuita de 15 minutos para conhecer mais sobre o trabalho de Paulo Roberto e entender como poderá ser uma experiência de acompanhamento — sem pressão para iniciar atendimento.</p>' +
+  body += '<p><strong><a href="' + resultUrl + '">Acessar a página da minha devolutiva</a></strong></p>' +
+    '<p style="font-size:13px;color:#667780">Se esta mensagem não estiver na sua Caixa de entrada, procure também em Spam, Lixo eletrônico ou Promoções e, se possível, marque este remetente como confiável.</p>' +
+    '<p>Se fizer sentido, você pode agendar uma conversa inicial gratuita de 15 minutos para conhecer mais sobre o trabalho de Paulo Roberto e entender como poderá ser uma experiência de acompanhamento — sem pressão para iniciar atendimento.</p>' +
     '<p><a href="' + wa + '">Agendar conversa inicial gratuita de 15 min</a></p>' +
     '<p style="font-size:12px;color:#667780">A Estrada é uma experiência guiada de autopercepção. Não é teste psicológico e não produz diagnóstico.</p>';
 
