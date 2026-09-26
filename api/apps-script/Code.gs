@@ -113,7 +113,11 @@ function registerJourney_(p) {
 }
 
 function buildInterpretiveResult_(answers) {
-  const base = { enabled: false, profile: '', tags: [], blocks: [] };
+  const base = {
+    enabled:false, profile:'', profileReading:'', direction:'',
+    tags:[], futureTags:[], blocks:[], stops:[], scores:{}, attention:false,
+    validation:CONFIG.VALIDATION_MODE
+  };
   if (!CONFIG.ENABLE_INTERPRETIVE_RESULT) return base;
 
   const matrix = SpreadsheetApp.openById(CONFIG.MATRIX_ID);
@@ -121,102 +125,107 @@ function buildInterpretiveResult_(answers) {
   const values = sheet.getDataRange().getValues();
   if (values.length < 2) return base;
 
-  const approved = {};
-  for (let i = 1; i < values.length; i++) {
-    const row = values[i];
-    const code = String(row[0] || '').trim();
-    const status = String(row[17] || '').trim().toLowerCase();
-    const allowed = status === 'aprovado' || (CONFIG.VALIDATION_MODE && status === 'pendente');
-    if (code && allowed) {
-      approved[code] = {
-        tag: row[3] || '',
-        reading: row[14] || '',
-        question: row[15] || '',
-        continuation: row[16] || ''
-      };
-    }
+  const rows = {};
+  for (let i=1;i<values.length;i++) {
+    const row=values[i];
+    const code=String(row[0]||'').trim();
+    const status=String(row[17]||'').trim().toLowerCase();
+    const allowed=status==='aprovado' || (CONFIG.VALIDATION_MODE && status==='pendente');
+    if (!code || !allowed) continue;
+    rows[code]={
+      code:code, tag:row[3]||'', signal:row[4]||'',
+      dims:{
+        clareza:Number(row[5]||0), seguranca:Number(row[6]||0),
+        pressao:Number(row[7]||0), abertura:Number(row[8]||0),
+        apoio:Number(row[9]||0), risco:Number(row[10]||0),
+        energia:Number(row[11]||0), cuidado:Number(row[12]||0),
+        futuro:Number(row[13]||0)
+      },
+      reading:row[14]||'', question:row[15]||'', continuation:row[16]||''
+    };
   }
 
-  const codeMap = {
-    inicio: {'clara-aberta':'Q1-A','estreita':'Q1-B','subida':'Q1-C','varios-caminhos':'Q1-D'},
-    terreno: {'pavimentado':'Q2-A','terra-limpa':'Q2-B','pedras':'Q2-C','derrapante':'Q2-D','sujo':'Q2-E','esburacado':'Q2-F'},
-    trajeto: {'reto':'Q3-A','curvas':'Q3-B','neblina':'Q3-C','descida-ingreme':'Q3-D'},
-    laterais: {'arvores':'Q4-A','montanhas':'Q4-B','abismo':'Q4-C','pantano':'Q4-D','cidade':'Q4-E','deserto':'Q4-F'},
-    presencas: {'animais-selvagens':'Q5-A','passaros':'Q5-B','nenhuma':'Q5-C','pessoas':'Q5-D'},
-    companhia: {'sozinho':'Q6-A','com-alguem':'Q6-B','com-varias-pessoas':'Q6-C','nao-sei':'Q6-D'},
-    ritmo: {'devagar':'Q7-A','correndo':'Q7-B','cuidado':'Q7-C','travado':'Q7-D'},
-    reacao: {'paro-observo':'Q8-A','tento-atravessar':'Q8-B','procuro-outro':'Q8-C','espero-ajuda':'Q8-D'}
+  const codeMap={
+    inicio:{'clara-aberta':'Q1-A','estreita':'Q1-B','subida':'Q1-C','varios-caminhos':'Q1-D'},
+    terreno:{'pavimentado':'Q2-A','terra-limpa':'Q2-B','pedras':'Q2-C','derrapante':'Q2-D','sujo':'Q2-E','esburacado':'Q2-F'},
+    trajeto:{'reto':'Q3-A','curvas':'Q3-B','neblina':'Q3-C','descida-ingreme':'Q3-D'},
+    laterais:{'arvores':'Q4-A','montanhas':'Q4-B','abismo':'Q4-C','pantano':'Q4-D','cidade':'Q4-E','deserto':'Q4-F'},
+    presencas:{'animais-selvagens':'Q5-A','passaros':'Q5-B','nenhuma':'Q5-C','pessoas':'Q5-D'},
+    companhia:{'sozinho':'Q6-A','com-alguem':'Q6-B','com-varias-pessoas':'Q6-C','nao-sei':'Q6-D'},
+    ritmo:{'devagar':'Q7-A','correndo':'Q7-B','cuidado':'Q7-C','travado':'Q7-D'},
+    reacao:{'paro-observo':'Q8-A','tento-atravessar':'Q8-B','procuro-outro':'Q8-C','espero-ajuda':'Q8-D'}
   };
-
-  const blocks = [];
-  Object.keys(codeMap).forEach(key => {
-    const rawValue = key === 'trajeto' ? choice_(answers[key]) : answers[key];
-    const code = codeMap[key][rawValue];
-    if (code && approved[code]) blocks.push(approved[code]);
+  const selected=[];
+  Object.keys(codeMap).forEach(key=>{
+    const raw=key==='trajeto'?choice_(answers[key]):answers[key];
+    const code=codeMap[key][raw];
+    if(code && rows[code]) selected.push(rows[code]);
   });
 
-  const stopMap = {'posto':'Q9-A','restaurante':'Q9-B','hotel':'Q9-C','mirante':'Q9-D','posto-medico':'Q9-E','capela':'Q9-F'};
-  (answers.paradas || []).forEach(v => {
-    const code = stopMap[v];
-    if (code && approved[code]) blocks.push(approved[code]);
+  const stopMap={'posto':'Q9-A','restaurante':'Q9-B','hotel':'Q9-C','mirante':'Q9-D','posto-medico':'Q9-E','capela':'Q9-F'};
+  const stopRows=[];
+  (answers.paradas||[]).forEach(v=>{
+    const code=stopMap[v];
+    if(code && rows[code]) { selected.push(rows[code]); stopRows.push(rows[code]); }
   });
+  if(!selected.length) return base;
 
-  const allRows = [];
-  Object.keys(codeMap).forEach(key => {
-    const rawValue = key === 'trajeto' ? choice_(answers[key]) : answers[key];
-    const code = codeMap[key][rawValue];
-    if (code && approved[code]) allRows.push(approved[code]);
-  });
-  (answers.paradas || []).forEach(v => {
-    const code = stopMap[v];
-    if (code && approved[code]) allRows.push(approved[code]);
-  });
+  const totals={clareza:0,seguranca:0,pressao:0,abertura:0,apoio:0,risco:0,energia:0,cuidado:0,futuro:0};
+  selected.forEach(item=>Object.keys(totals).forEach(k=>totals[k]+=Number(item.dims[k]||0)));
+  const scores={};
+  Object.keys(totals).forEach(k=>scores[k]=Math.round((totals[k]/selected.length)*100)/100);
 
-  const tags = [...new Set(allRows.map(b => b.tag).filter(Boolean))];
-  const future = String(answers.futuro || '').toLowerCase();
-  ['paz','leveza','descanso','recomeço','segurança','vínculo','sentido','coragem','reconciliação','direção','clareza'].forEach(k => {
-    if (future.indexOf(k) >= 0 && tags.indexOf(k) < 0) tags.push(k);
-  });
+  const futureText=String(answers.futuro||'').toLowerCase();
+  const futureTags=[];
+  const keywords=[
+    ['paz','paz'],['leveza','leveza'],['descanso','descanso'],['recomeço','recomeço'],
+    ['segurança','segurança'],['vínculo','vínculo'],['sentido','sentido'],['coragem','coragem'],
+    ['reconciliação','reconciliação'],['direção','direção'],['clareza','direção'],['decisão','direção']
+  ];
+  keywords.forEach(x=>{if(futureText.indexOf(x[0])>=0 && futureTags.indexOf(x[1])<0) futureTags.push(x[1]);});
 
-  let profile = 'Leitura equilibrada';
-  let profileReading = 'Seu percurso reúne sinais diferentes. Observe quais partes desta leitura realmente representam o seu momento.';
-  let direction = 'Nem toda estrada pede uma resposta imediata. Às vezes, perceber melhor o caminho já muda a forma de seguir.';
+  let profile='Leitura equilibrada';
+  let profileReading='Seu percurso reúne sinais diferentes e não concentra toda a experiência em um único eixo. Observe quais partes realmente representam o seu momento.';
+  let direction='Nem toda estrada pede uma resposta imediata. Às vezes, perceber melhor o caminho já muda a forma de seguir.';
 
-  const valuesByTag = tags.join(' ');
-  if (valuesByTag.indexOf('urgência') >= 0 || valuesByTag.indexOf('travamento') >= 0 || valuesByTag.indexOf('irregularidade') >= 0) {
-    profile = 'Sobrecarga e Travessia';
-    profileReading = 'O percurso sugere esforço prolongado e necessidade de reorganizar a travessia.';
-    direction = 'Nem sempre força significa continuar no mesmo ritmo.';
+  // Regras de combinação da matriz, em ordem de prioridade.
+  if(scores.pressao>=0.65 && scores.energia<=-0.55){
+    profile='Sobrecarga e Travessia';
+    profileReading='O percurso sugere esforço prolongado e necessidade de reorganizar a travessia.';
+    direction='Nem sempre força significa continuar no mesmo ritmo.';
+  } else if(scores.seguranca<=-0.55 && scores.risco>=0.65){
+    profile='Instabilidade e Cautela';
+    profileReading='O caminho é percebido com instabilidade e necessidade de proteção.';
+    direction='Quando o chão parece instável, cuidado pode ser uma forma de preservação.';
+  } else if(scores.apoio<=-0.45 && (answers.companhia==='sozinho' || answers.laterais==='deserto' || answers.reacao==='espero-ajuda')){
+    profile='Solidão e Necessidade de Apoio';
+    profileReading='O percurso sugere que apoio e presença podem estar fazendo falta.';
+    direction='Há momentos em que o caminho pesa mais porque tentamos sustentá-lo sozinhos.';
+  } else if(scores.clareza<=-0.45 && (answers.inicio==='varios-caminhos' || (answers.paradas||[]).indexOf('mirante')>=0 || choice_(answers.trajeto)==='neblina')){
+    profile='Reorganização e Clareza';
+    profileReading='O momento parece pedir compreensão e direção antes de velocidade.';
+    direction='Talvez este seja um momento de ganhar clareza antes de exigir mais de si.';
+  } else if(scores.futuro>=0.5 && (answers.laterais==='arvores' || answers.presencas==='passaros' || (answers.paradas||[]).indexOf('mirante')>=0 || (answers.paradas||[]).indexOf('capela')>=0)){
+    profile='Sentido, Respiro e Redirecionamento';
+    profileReading='A estrada aponta para busca de reconexão, perspectiva e sentido.';
+    direction='Algumas buscas não são apenas por solução, mas por um modo mais inteiro de viver.';
   }
-  if (valuesByTag.indexOf('instabilidade') >= 0 || valuesByTag.indexOf('ameaça') >= 0) {
-    profile = 'Instabilidade e Cautela';
-    profileReading = 'O caminho é percebido com instabilidade e necessidade de proteção.';
-    direction = 'Quando o chão parece instável, cuidado pode ser uma forma de preservação.';
-  }
-  if (valuesByTag.indexOf('solidão') >= 0 || valuesByTag.indexOf('isolamento') >= 0 || valuesByTag.indexOf('apoio necessário') >= 0) {
-    profile = 'Solidão e Necessidade de Apoio';
-    profileReading = 'O percurso sugere que apoio e presença podem estar fazendo falta.';
-    direction = 'Há momentos em que o caminho pesa mais porque tentamos sustentá-lo sozinhos.';
-  }
-  if (valuesByTag.indexOf('indecisão') >= 0 || valuesByTag.indexOf('incerteza') >= 0 || (answers.paradas || []).indexOf('mirante') >= 0) {
-    profile = 'Reorganização e Clareza';
-    profileReading = 'O momento parece pedir compreensão e direção antes de velocidade.';
-    direction = 'Talvez este seja um momento de ganhar clareza antes de exigir mais de si.';
-  }
-  if (valuesByTag.indexOf('sentido') >= 0 || valuesByTag.indexOf('perspectiva') >= 0 || valuesByTag.indexOf('crescimento') >= 0) {
-    profile = 'Sentido, Respiro e Redirecionamento';
-    profileReading = 'A estrada aponta para busca de reconexão, perspectiva e sentido.';
-    direction = 'Algumas buscas não são apenas por solução, mas por um modo mais inteiro de viver.';
-  }
+
+  const alerts=selected.filter(x=>String(x.signal).toLowerCase()==='alerta').length;
+  const tags=[...new Set(selected.map(x=>x.tag).filter(Boolean).concat(futureTags))];
 
   return {
-    enabled: allRows.length > 0,
-    profile: profile,
-    profileReading: profileReading,
-    direction: direction,
-    tags: tags,
-    blocks: allRows.slice(0, 6),
-    validation: CONFIG.VALIDATION_MODE
+    enabled:true,
+    profile:profile,
+    profileReading:profileReading,
+    direction:direction,
+    tags:tags,
+    futureTags:futureTags,
+    blocks:selected.slice(0,6),
+    stops:stopRows,
+    scores:scores,
+    attention:alerts>=2,
+    validation:CONFIG.VALIDATION_MODE
   };
 }
 
@@ -237,6 +246,18 @@ function sendResultEmail_(r) {
         '<p>' + escapeHtml_(b.question) + '</p>' +
         '<p>' + escapeHtml_(b.continuation) + '</p></div>';
     });
+    if (r.analysis.stops && r.analysis.stops.length) {
+      body += '<p><strong>O que suas paradas mostram</strong></p>';
+      r.analysis.stops.forEach(b => {
+        body += '<p><strong>' + escapeHtml_(b.reading) + '</strong><br>' + escapeHtml_(b.question) + '</p>';
+      });
+    }
+    if (r.answers && r.answers.futuro) {
+      body += '<p><strong>Seu amanhã</strong><br>' + escapeHtml_(r.answers.futuro) + '</p>';
+    }
+    if (r.analysis.attention) {
+      body += '<p><strong>Ponto de atenção</strong><br>Alguns elementos do percurso sugerem maior tensão, risco percebido ou necessidade de cuidado. Isso não é diagnóstico; é um convite para observar com mais atenção o que vem pesando no caminho.</p>';
+    }
     if (r.analysis.direction) {
       body += '<p><strong>Uma mensagem para continuar:</strong><br>' + escapeHtml_(r.analysis.direction) + '</p>';
     }
