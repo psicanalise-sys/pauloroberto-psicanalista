@@ -4,136 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sua Devolutiva | A Estrada</title>
-<meta name="description" content="Modelo editorial da devolutiva da experiência A Estrada.">
+<meta name="description" content="Página da devolutiva da experiência A Estrada.">
 <style>
-:root{
-  --ink:#173544;--ink2:#274c5e;--gold:#b59a62;--paper:#f7f4ed;
-  --white:#fff;--muted:#667780;--line:#e4ddcf;--soft:#fbf8f1;
-}
-*{box-sizing:border-box}
-body{margin:0;background:#f4f1ea;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
-.page{max-width:980px;margin:40px auto;padding:0 18px}
-.report{background:#fff;border:1px solid #e7dfd2;border-radius:28px;overflow:hidden;box-shadow:0 24px 70px rgba(23,53,68,.11)}
-.hero{padding:52px 54px 42px;background:linear-gradient(135deg,#faf7ef,#f4eee2);border-bottom:1px solid var(--line)}
+:root{--ink:#173544;--ink2:#274c5e;--gold:#b59a62;--paper:#f7f4ed;--white:#fff;--muted:#667780;--line:#e4ddcf;--soft:#fbf8f1}
+*{box-sizing:border-box}body{margin:0;background:#f4f1ea;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+.page{max-width:840px;margin:40px auto;padding:0 18px}.card{background:#fff;border:1px solid #e7dfd2;border-radius:28px;overflow:hidden;box-shadow:0 24px 70px rgba(23,53,68,.11)}
+.hero{padding:48px 50px 36px;background:linear-gradient(135deg,#faf7ef,#f4eee2);border-bottom:1px solid var(--line)}
 .ey{font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:400;color:var(--ink);margin-top:0}
-h1{font-size:48px;line-height:1.05;margin-bottom:12px}
-h2{font-size:34px;line-height:1.15;margin-bottom:14px}
-h3{font-size:23px;margin-bottom:8px}
-.meta{color:var(--muted);font-size:14px}.lead{font-size:18px;color:#435963;max-width:760px}
-.content{padding:46px 54px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 44px}
-.kpi{background:var(--soft);border:1px solid #ece3d4;border-radius:18px;padding:18px}
-.kpi span{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:700}
-.kpi strong{display:block;margin-top:8px;font-size:16px;line-height:1.35}
-.block{padding:30px 0;border-top:1px solid var(--line)}
-.block:first-of-type{border-top:0}
-.quote{border-left:4px solid var(--gold);padding:4px 0 4px 20px;font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:1.35;margin:24px 0}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:22px}
-.card{border:1px solid var(--line);border-radius:18px;padding:22px;background:#fff}
-.card .tag{display:inline-block;background:#f4eddf;color:#826b3e;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.card p{margin:0;color:#53666f}
-.stops{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
-.stop{background:#f9f5ec;border-radius:18px;padding:18px;border:1px solid #e9decb}
-.stop strong{display:block;margin-bottom:6px}.stop p{margin:0;font-size:14px;color:#5d6d73}
-.future{background:var(--ink);color:#fff;border-radius:24px;padding:30px;margin-top:18px}
-.future h3{color:#fff}.future p{color:#d9e3e7}
-.direction{background:#f4efe3;border:1px solid #e5dac6;border-radius:24px;padding:28px;margin:28px 0}
-.direction .ey{margin-bottom:8px}
-.cta{background:linear-gradient(135deg,#173544,#274c5e);color:#fff;border-radius:26px;padding:34px;margin-top:38px}
-.cta h2{color:#fff;margin-bottom:10px}.cta p{color:#d8e2e6;max-width:720px}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
-.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:999px;padding:14px 22px;font-weight:700}
-.btn.primary{background:var(--gold);color:#fff}
-.btn.secondary{border:1px solid rgba(255,255,255,.55);color:#fff}
-.footer{padding:30px 54px;background:#fbfaf7;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
-.disclaimer{margin-top:10px}
-@media(max-width:760px){
- .hero,.content,.footer{padding-left:24px;padding-right:24px}
- h1{font-size:38px}.kpis,.cards,.stops{grid-template-columns:1fr}.actions .btn{width:100%}
-}
+h1,h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;margin:0 0 14px}h1{font-size:44px;line-height:1.08}.lead{font-size:18px;color:#435963}
+.content{padding:38px 50px}.box{background:var(--soft);border:1px solid #ece3d4;border-radius:20px;padding:22px;margin:18px 0}
+.meta{font-size:13px;color:var(--muted)}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;text-decoration:none;border-radius:999px;padding:14px 22px;font-weight:700}.primary{background:var(--ink);color:#fff}.secondary{border:1px solid var(--ink);color:var(--ink)}
+.footer{padding:26px 50px;background:#fbfaf7;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@media(max-width:640px){.hero,.content,.footer{padding-left:24px;padding-right:24px}h1{font-size:36px}.actions .btn{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
 <div class="page">
-  <article class="report">
+  <article class="card">
     <header class="hero">
       <div class="ey">A Estrada • Sua devolutiva</div>
-      <h1>O caminho que você construiu</h1>
-      <p class="lead">Uma leitura de autopercepção sobre como você percebe seus caminhos, desafios, necessidades e futuro neste momento.</p>
-      <div class="meta">Exemplo de layout • Paulo Roberto • Psicanálise Online</div>
+      <h1>Seu percurso foi registrado.</h1>
+      <p class="lead">Esta é a página vinculada à sua experiência A Estrada.</p>
     </header>
-
     <main class="content">
-      <section class="kpis">
-        <div class="kpi"><span>Momento predominante</span><strong>Reorganização e clareza</strong></div>
-        <div class="kpi"><span>Força percebida</span><strong>Capacidade de observar antes de agir</strong></div>
-        <div class="kpi"><span>Ponto de atenção</span><strong>Sobrecarga e pouca visibilidade</strong></div>
-        <div class="kpi"><span>Necessidade em destaque</span><strong>Perspectiva e descanso</strong></div>
-      </section>
-
-      <section class="block">
-        <div class="ey">Visão geral</div>
-        <h2>O que mais se destaca na sua estrada</h2>
-        <p>Seu percurso parece reunir uma combinação entre busca por direção, necessidade de reduzir o peso do caminho e vontade de enxergar melhor o que vem pela frente. Isso não define quem você é. Ajuda apenas a observar o que parece ocupar mais espaço neste momento.</p>
-        <div class="quote">“Talvez este seja um momento de ganhar clareza antes de exigir tanto de si.”</div>
-      </section>
-
-      <section class="block">
-        <div class="ey">Seu percurso</div>
-        <h2>Como você percebe o caminho</h2>
-        <div class="cards">
-          <div class="card"><div class="tag">Início</div><h3>Mais de uma direção</h3><p>Você percebe diferentes possibilidades diante de si. Isso pode trazer abertura, mas também dúvida sobre qual caminho merece sua energia agora.</p></div>
-          <div class="card"><div class="tag">Terreno</div><h3>Pedras no percurso</h3><p>O chão aparece irregular. Pequenas dificuldades repetidas podem estar consumindo mais energia do que um único grande problema.</p></div>
-          <div class="card"><div class="tag">Entorno</div><h3>Neblina e montanhas</h3><p>Há desafios importantes e nem tudo parece totalmente visível. O caminho pode estar pedindo perspectiva, não respostas apressadas.</p></div>
-          <div class="card"><div class="tag">Ritmo</div><h3>Mais cuidado do que velocidade</h3><p>Seu ritmo sugere atenção e cautela. Vale perceber se esse cuidado protege você ou se já está tornando cada passo pesado demais.</p></div>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="ey">Suas paradas</div>
-        <h2>O que parece estar pedindo espaço</h2>
-        <div class="stops">
-          <div class="stop"><strong>Mirante</strong><p>Necessidade de enxergar melhor o todo antes de decidir.</p></div>
-          <div class="stop"><strong>Hotel</strong><p>Necessidade de descanso e reorganização do próprio ritmo.</p></div>
-          <div class="stop"><strong>Posto</strong><p>Necessidade de recuperar energia e sustentação para continuar.</p></div>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="ey">Seu amanhã</div>
-        <h2>O que você deseja encontrar</h2>
-        <div class="future">
-          <h3>Direção, leveza e segurança</h3>
-          <p>Quando você olha para o futuro, aparecem desejos ligados a clareza, redução de peso e estabilidade. Isso pode ajudar a perceber não apenas onde quer chegar, mas também aquilo que sente falta hoje.</p>
-        </div>
-      </section>
-
-      <section class="block">
-        <div class="direction">
-          <div class="ey">Uma mensagem para continuar</div>
-          <h3>Nem toda estrada pede pressa.</h3>
-          <p>Algumas pedem pausa, leitura honesta do caminho e um passo de cada vez. Você não precisa ter todas as respostas agora para começar a se escutar melhor.</p>
-        </div>
-      </section>
-
-      <section class="cta">
-        <div class="ey" style="color:#d8bd87">Se fizer sentido para você</div>
-        <h2>Conheça meu trabalho antes de decidir qualquer próximo passo.</h2>
-        <p>Você pode agendar uma <strong>conversa inicial gratuita de 15 minutos</strong> para conhecer mais sobre meu trabalho e entender como poderá ser nossa experiência de acompanhamento. É apenas um primeiro contato, sem pressão para iniciar atendimento.</p>
-        <div class="actions">
-          <a class="btn primary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Fiz%20A%20Estrada%20e%20gostaria%20de%20agendar%20uma%20conversa%20inicial%20gratuita%20de%2015%20minutos%20para%20conhecer%20melhor%20seu%20trabalho.">Agendar conversa inicial gratuita de 15 min</a>
-          <a class="btn secondary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Gostaria%20de%20entender%20mais%20sobre%20os%20atendimentos.">Entender mais sobre os atendimentos</a>
-        </div>
-      </section>
+      <div class="box">
+        <strong>Devolutiva interpretativa em validação.</strong>
+        <p>Nesta fase de homologação, a leitura interpretativa automática ainda não está liberada. A matriz de interpretação será utilizada somente após a validação de Paulo Roberto.</p>
+        <p>Isso evita apresentar como leitura individual algo que ainda não passou pela revisão profissional prevista para o método.</p>
+      </div>
+      <p class="meta" id="leadRef"></p>
+      <p>Enquanto isso, você pode conversar com Paulo Roberto sobre a experiência ou conhecer como funciona o acompanhamento.</p>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://wa.me/5541999314077?text=Ol%C3%A1%2C%20Dr.%20Paulo.%20Fiz%20A%20Estrada%20e%20gostaria%20de%20conversar%20sobre%20a%20experi%C3%AAncia.">Conversar sobre A Estrada</a>
+        <a class="btn secondary" href="../">Voltar para A Estrada</a>
+      </div>
     </main>
-
     <footer class="footer">
       <strong>Paulo Roberto • Psicanálise Online</strong><br>
       pauloroberto.psicanalise@gmail.com
-      <div class="disclaimer">A Estrada é uma experiência de autopercepção. Esta devolutiva não constitui diagnóstico e não substitui avaliação ou atendimento profissional.</div>
+      <p>A Estrada é uma experiência guiada de autopercepção. Não é teste psicológico e não produz diagnóstico.</p>
     </footer>
   </article>
 </div>
+<script>
+const lead=new URLSearchParams(location.search).get('lead');
+if(lead){document.getElementById('leadRef').textContent='Referência da experiência: '+lead;}
+</script>
 </body>
 </html>
